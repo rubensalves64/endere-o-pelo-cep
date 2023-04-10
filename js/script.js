@@ -13,9 +13,9 @@ const closeButton = document.querySelector("#close-message");
 
 cepInput.addEventListener("keypress", (e) => {
   const onlyNumbers = /[0-9]|\./;
-  const key = String.fromCharCode(e.keyCode);
+  const key = String.fromCharCode(e.keyCode)
 
-    console.log(key)
+  console.log(key);
     //allow only numbers
     console.log(onlyNumbers.test(key));
     if(!onlyNumbers.test(key)) {
@@ -47,19 +47,20 @@ cepInput.addEventListener("keyup", (e) => {
 
 const getAddress = async (cep) => {
 
-  togglerLoader()
+  toggleLoader()
 
   //o blur sever para preencher automaticamente ao colocar o cep
   //o resto de  enedereço o qual o site redericionar
-  cepInput.blur()
+  cepInput.blur();
 
   const apiUrl = `https://viacep.com.br/ws/${cep}/json/`;
 
   //o await seria o tempo  de resposta de que o site vai verificar os dados apara ao usuario
   const response = await fetch(apiUrl)
-  const data = await response.json()
+  const data = await response.json();
   console.log(data)
-  console.log(form)
+  console.log(formInputs)
+  console.log(data.erro);
 
   if (data.erro === "true") {
     if (!addressInput.hasAttribute("disabled")) {
@@ -78,17 +79,17 @@ const getAddress = async (cep) => {
 
   addressInput.value = data.logradouro
   cityInput.value = data.localidade
-  neighbordhoodInput.value = data.bairro
-  reginoInput.value = data.uf
+  neighborhoodInput.value = data.bairro
+  regionInput.value = data.uf
 
-  togglerLoader()
+  toggleLoader()
 }
 
 //Add or remove disabled
 
 const toggleDisabled = () => {
   
-  if(reginoInput.hasAttribute("disabled")){
+  if(regionInput.hasAttribute("disabled")){
     formInputs.forEach((input) =>{
       input.removeAttribute("disabled")
     })
@@ -101,47 +102,43 @@ const toggleDisabled = () => {
 }
 
 //mostrar ou hider loader
-const togglerLoader = () =>{
+const toggleLoader = () => {
+  const fadeElement = document.querySelector("#fade");
+  const loaderElement = document.querySelector("#loader");
 
-  const fadeElement = document.querySelector("#fade")
-  const loaderElement = document.querySelector("#loader")
+  fadeElement.classList.toggle("hide");
+  loaderElement.classList.toggle("hide");
+};
 
-  fadeElement.classList.toggle("hide")
-  loaderElement.classList.toggle("hide")
+// Show or hide message
+const toggleMessage = (msg) => {
+  const fadeElement = document.querySelector("#fade");
+  const messageElement = document.querySelector("#message");
 
-  //show error and reset form
-}
+  const messageTextElement = document.querySelector("#message p");
 
-//show or hide message
-const togglerMessage = (msg) => {
-  const messageElement = document.querySelector("#message")
+  messageTextElement.innerText = msg;
 
-  const messageElementText = document.querySelector("#message p")
+  fadeElement.classList.toggle("hide");
+  messageElement.classList.toggle("hide");
+};
 
-  messageElementText.innerText = msg;
-  
-  fadeElement.classList.toggle("hide")
-  messageElement.classList.toggle("hide")
-
-}
-
-
-//close message modal
+// Close message modal
 closeButton.addEventListener("click", () => toggleMessage());
 
-//save address
+// Save address
+addressForm.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-addressForm.addEventListener("submit", (e) =>{
-  e.preventDefault()
-  toggleLoader
+  toggleLoader();
 
-  //setTimetout seria o tempo para fazer para fazer essa funçao
-  setTimeout(()=>{
-    toggleLoader()
+  setTimeout(() => {
+    toggleLoader();
 
-    togglerMessage("endereço salvo com sucesso")
-    
-    addressForm.reset()
-    toggleDisabled()
-  },1500)
-})
+    toggleMessage("Endereço salvo com sucesso!");
+
+    addressForm.reset();
+
+    toggleDisabled();
+  }, 1000);
+});
